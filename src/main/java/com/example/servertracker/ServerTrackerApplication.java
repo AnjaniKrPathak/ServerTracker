@@ -16,7 +16,7 @@ public class ServerTrackerApplication {
 	@GetMapping("/hello")
 	public String helloWorld(){
 
-		return "Hello World";
+		return "Hello HACKATHLON";
 	}
 
 }

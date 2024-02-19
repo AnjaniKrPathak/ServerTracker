@@ -36,7 +36,7 @@ public class ReportServiceImpl implements ReportService {
 
             // Initialize a pointer in file
             // using OutputStream
-            OutputStream os = new FileOutputStream("D:/Anjani/Personal/file/test.pdf");
+            OutputStream os = new FileOutputStream("C:/Anjani/Report/file/test.pdf");
 
             // Starting writing the bytes in it
             os.write(reportContent);

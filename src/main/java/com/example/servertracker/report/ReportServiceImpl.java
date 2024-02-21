@@ -2,10 +2,13 @@ package com.example.servertracker.report;
 
 import com.example.servertracker.report.data.Item;
 import com.example.servertracker.report.service.ReportService;
+import com.example.servertracker.server.data.ServerTableSpace;
+import com.example.servertracker.server.service.ServerService;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
 import net.sf.jasperreports.engine.util.JRLoader;
 import net.sf.jasperreports.engine.util.JRSaver;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ResourceUtils;
 
@@ -20,16 +23,18 @@ import java.util.Map;
 
 @Service
 public class ReportServiceImpl implements ReportService {
+    @Autowired
+    ServerService serverService;
 
 
     public void genReport() {
         String status = "generated";
         Item item = new Item("test1");
-        List<Item> items = new ArrayList<>();
-        items.add(new Item("test1"));
-        items.add(new Item("test2"));
+       // List<Item> items = new ArrayList<>();
+        List<ServerTableSpace> tableSpacesList=serverService.getServerTableSpaceDetail();
 
-        byte[] reportContent = getItemReport(items, "pdf");
+
+        byte[] reportContent = getItemReport(tableSpacesList, "pdf");
 
         // Try block to check for exceptions
         try {
@@ -60,7 +65,7 @@ public class ReportServiceImpl implements ReportService {
 
     }
 
-    public byte[] getItemReport(List<Item> items, String format) {
+    public byte[] getItemReport(List<ServerTableSpace> items, String format) {
 
         JasperReport jasperReport;
 
@@ -79,7 +84,7 @@ public class ReportServiceImpl implements ReportService {
 
         JRBeanCollectionDataSource dataSource = new JRBeanCollectionDataSource(items);
         Map<String, Object> parameters = new HashMap<>();
-        parameters.put("title", "Item Report");
+        parameters.put("title", "TABLE SPACE Report");
         JasperPrint jasperPrint;
         byte[] reportContent;
 

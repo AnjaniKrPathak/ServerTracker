@@ -12,8 +12,8 @@ import lombok.NoArgsConstructor;
 public class ServerTableSpace {
     private String tableSpaceName;
     private double pctUsed;
-    private double allocated;
-    private double used;
-    private double free;
-    private int dataFiles;
+    private double spaceAllocated;
+    private double spaceUsed;
+    private double spaceFree;
+
 }

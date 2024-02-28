@@ -1,6 +1,8 @@
 package com.example.servertracker.report.controller;
 
 import com.example.servertracker.report.service.ReportService;
+import com.example.servertracker.server.data.LinuxServer;
+import com.example.servertracker.server.data.ServerSpace;
 import com.example.servertracker.server.data.ServerTableSpace;
 import com.example.servertracker.server.service.ServerService;
 import net.sf.jasperreports.engine.*;
@@ -10,6 +12,7 @@ import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
+import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.util.ResourceUtils;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -68,6 +71,46 @@ public class ReportController {
 
 
     }
+
+    @GetMapping("/serverspacereport")
+
+    public ResponseEntity<byte[]> getServerSpaceReport() throws FileNotFoundException {
+        try{
+            List<ServerSpace> serverSpaceList=serverService.getOSInfo(new LinuxServer("10.109.38.8",22,"netcrk","crknet"));
+
+            //tableSpaceList.add(new ServerTableSpace("NC_DATA",49152,44855.6875,4296.3125,91));
+            // tableSpaceList.add(new ServerTableSpace("NC_INDEXES",12288,8090.375,4197.625,65));
+            Map<String,Object> tableSpaceParam=new HashMap<>();
+            tableSpaceParam.put("CompanyName","Netcracker Technology");
+            tableSpaceParam.put("serverSpaceData",new JRBeanCollectionDataSource(serverSpaceList));
+            JasperPrint empReport =
+                    JasperFillManager.fillReport
+                            (
+                                    JasperCompileManager.compileReport(
+                                            ResourceUtils.getFile("classpath:osspace-details.jrxml")
+                                                    .getAbsolutePath()) // path of the jasper report
+                                    , tableSpaceParam // dynamic parameters
+                                    , new JREmptyDataSource()
+                            );
+
+            HttpHeaders headers = new HttpHeaders();
+            //set the PDF format
+            headers.setContentType(MediaType.APPLICATION_PDF);
+            headers.setContentDispositionFormData("filename", "serverspace_details.pdf");
+            //create the report in PDF format
+            return new ResponseEntity<byte[]>
+                    (JasperExportManager.exportReportToPdf(empReport), headers, HttpStatus.OK);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+            return new ResponseEntity<byte[]>(HttpStatus.INTERNAL_SERVER_ERROR);
+        }
+
+
+
+
+    }
+
 
 
 }

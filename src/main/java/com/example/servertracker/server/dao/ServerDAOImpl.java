@@ -31,7 +31,7 @@ public class ServerDAOImpl implements ServerDAO {
 
     @Override
     public List<PocOffering> testDB() {
-        String sql="select flat_offering_id,name from poc_offering";
+        String sql="select flat_offering_id,name from poc_offering where flat_offering_id =75800000";
         List<PocOffering> offerings = jdbcTemplate.query(
                 sql,
                 new BeanPropertyRowMapper(PocOffering.class));;

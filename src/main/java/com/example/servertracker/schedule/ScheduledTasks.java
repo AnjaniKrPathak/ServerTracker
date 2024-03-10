@@ -12,11 +12,11 @@ import java.util.Date;
 public class ScheduledTasks {
     private static final Logger log = LoggerFactory.getLogger(ScheduledTasks.class);
     private static final SimpleDateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
-<<<<<<< HEAD
 
-=======
+
+
     @Scheduled(fixedRate = 5000)
->>>>>>> origin/master
+
     public void resportCurrentTime(){
         log.info("The time is now {}", dateFormat.format(new Date()));
         System.out.print("hi ");

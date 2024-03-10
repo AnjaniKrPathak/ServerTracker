@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
 @SpringBootApplication(scanBasePackages={
 		"com.example.servertracker","com.example.servertracker.user.repo"})
 @EnableScheduling
-
+@RestController
 public class ServerTrackerApplication {
 
 	public static void main(String[] args) {

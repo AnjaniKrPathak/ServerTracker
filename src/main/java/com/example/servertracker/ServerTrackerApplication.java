@@ -7,11 +7,13 @@ import org.springframework.data.jpa.repository.config.EnableJpaRepositories;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
+import springfox.documentation.swagger2.annotations.EnableSwagger2;
 
 @SpringBootApplication(scanBasePackages={
 		"com.example.servertracker","com.example.servertracker.user.repo"})
 @EnableScheduling
 @RestController
+
 public class ServerTrackerApplication {
 
 	public static void main(String[] args) {

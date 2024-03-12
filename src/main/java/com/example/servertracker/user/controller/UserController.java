@@ -2,6 +2,7 @@ package com.example.servertracker.user.controller;
 
 import com.example.servertracker.user.entity.User;
 import com.example.servertracker.user.entity.UserServer;
+import com.example.servertracker.user.response.UserReseponse;
 import com.example.servertracker.user.response.UserServerReponse;
 import com.example.servertracker.user.service.UserService;
 import org.apache.commons.csv.CSVFormat;
@@ -32,9 +33,25 @@ public class UserController {
     @Autowired
     UserService userService;
     @PostMapping(value = "/addUser")
-    public ResponseEntity<String> addUser(@RequestBody User user){
+    public ResponseEntity<?>  addUser(@RequestBody User user){
           User u1 =userService.addUser(user);
-         return ResponseEntity.ok(u1.getEmail() +" :"+"User Added ");
+        UserReseponse ur=new UserReseponse();
+        Map<String,Object> map=new LinkedHashMap<String,Object>();
+        if(user.getEmail()!=null){
+
+            ur.setUserId(u1.getEmail());
+            ur.setMessage("User Added Succfully");
+            map.put("statusCode", HttpStatus.OK.value());
+            map.put("data",ur);
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        }
+        else {
+            map.clear();
+            map.put("status",0);
+            map.put("message","Server Not Added");
+            return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+        }
+
     }
     @PostMapping("/addServer")
     @CrossOrigin(origins = "http://localhost:3000")

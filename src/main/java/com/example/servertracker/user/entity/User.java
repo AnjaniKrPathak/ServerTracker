@@ -23,7 +23,7 @@ import java.util.Set;
 @Table(name = "USER_TEST")
 @JsonDeserialize(as = User.class)
 
-@SequenceGenerator(name = "USER_TEST_SEQ", allocationSize = 1)
+
 public class User implements Serializable {
 
     @Id
@@ -31,6 +31,7 @@ public class User implements Serializable {
     private String email;
     private String name;
     private String project;
+    private String password;
     private Integer status;
 
 

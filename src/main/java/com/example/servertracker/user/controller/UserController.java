@@ -2,6 +2,7 @@ package com.example.servertracker.user.controller;
 
 import com.example.servertracker.user.entity.User;
 import com.example.servertracker.user.entity.UserServer;
+import com.example.servertracker.user.response.UserServerReponse;
 import com.example.servertracker.user.service.UserService;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVParser;
@@ -20,7 +21,9 @@ import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/user")
@@ -35,9 +38,26 @@ public class UserController {
     }
     @PostMapping("/addServer")
     @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<String> addUserServer(@RequestBody UserServer userServer){
+    public ResponseEntity<?> addUserServer(@RequestBody UserServer userServer){
        UserServer server =userService.addUserServer(userServer);
-        return ResponseEntity.ok(server.getServerIp()+" "+"Server Added");
+        UserServerReponse u1=new UserServerReponse();
+        u1.setServerIp(server.getServerIp());
+
+        Map<String,Object> map=new LinkedHashMap<String,Object>();
+        if(userServer.getServerIp()!=null){
+
+            u1.setServerIp(server.getServerIp());
+            u1.setMessage("server added Successfully");
+            map.put("statusCode", HttpStatus.OK.value());
+            map.put("data",u1);
+            return new ResponseEntity<>(map, HttpStatus.OK);
+        }
+        else {
+            map.clear();
+            map.put("status",0);
+            map.put("message","Server Not Added");
+            return new ResponseEntity<>(map, HttpStatus.NOT_FOUND);
+        }
     }
     @GetMapping("/getAllUser")
     public ResponseEntity<List<User>> getAllUsers(){

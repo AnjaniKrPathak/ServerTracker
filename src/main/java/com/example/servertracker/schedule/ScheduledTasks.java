@@ -15,7 +15,7 @@ public class ScheduledTasks {
 
 
 
-    @Scheduled(fixedRate = 5000)
+
 
     public void resportCurrentTime(){
         log.info("The time is now {}", dateFormat.format(new Date()));

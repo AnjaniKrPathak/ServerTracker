@@ -1,6 +1,6 @@
 package com.example.servertracker.report.service;
 
-import com.example.servertracker.server.data.ServerSpace;
+import com.example.servertracker.server.data.UnixSpaceDetail;
 import com.example.servertracker.server.data.ServerTableSpace;
 
 import java.util.List;
@@ -12,5 +12,5 @@ public interface ReportService {
 
     public void genOSSpaceReport();
 
-    public byte[] getServerSpaceReport(List<ServerSpace> items, String format);
+    public byte[] getServerSpaceReport(List<UnixSpaceDetail> items, String format);
 }

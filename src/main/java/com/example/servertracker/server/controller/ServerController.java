@@ -1,16 +1,14 @@
 package com.example.servertracker.server.controller;
 
+import com.example.servertracker.server.dao.UnixServerRepo;
 import com.example.servertracker.server.data.*;
 import com.example.servertracker.server.service.ServerService;
 
 import com.example.servertracker.user.entity.UserServer;
 import com.example.servertracker.user.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Bean;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.HttpStatusCode;
 import org.springframework.http.ResponseEntity;
-import org.springframework.stereotype.Repository;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.*;
@@ -24,6 +22,7 @@ import static com.example.servertracker.server.dao.ConfigDataSource.getDBFlatOff
 public class ServerController {
     @Autowired
     ServerService serverService;
+
 
     @Autowired
 
@@ -75,7 +74,7 @@ public class ServerController {
     }
     @PostMapping("/osSpaceInfo")
     public ResponseEntity<?> getOSInfo(@RequestBody LinuxServer linuxServer){
-        List<ServerSpace> serverSpaceList= serverService.getOSInfo(linuxServer);
+        List<UnixSpaceDetail> serverSpaceList= serverService.getOSInfo(linuxServer);
         Map<String,Object> map=new LinkedHashMap<String,Object>();
         if(!serverSpaceList.isEmpty()){
             map.put("status", 1);
@@ -99,9 +98,15 @@ public class ServerController {
     }
 
     @GetMapping("/serverOsSpaceInfo")
-    public ResponseEntity<?> getOSInfo(){
+    public ResponseEntity<?> getUnixServerInfo(){
         List<UserServer> userServers=userService.getAllUserServers();
-        HashMap<String, List<ServerSpace>> serverOSInfo= serverService.getUserServerOSInfo(userServers);
+        HashMap<String, List<UnixSpaceDetail>> serverOSInfo= serverService.getUserServerOSInfo(userServers);
+
+        // Save Unix Space Detail
+         for(Map.Entry<String,List<UnixSpaceDetail> > space:serverOSInfo.entrySet()){
+            HashMap<String,List<UnixSpaceDetail>> serverUnixDetail =serverService.saveUserServerOSInfo(space.getKey(),space.getValue());
+
+         }
         Map<String,Object> map=new LinkedHashMap<String,Object>();
         if(!serverOSInfo.isEmpty()){
             map.put("status", 1);
@@ -127,12 +132,7 @@ public class ServerController {
        List<PocTableData> pocTableDataList=serverService.getAllPOCTableData(serverIp);
         return ResponseEntity.ok(pocTableDataList);
     }
-    @GetMapping("/getWeblogicAccess")
-    public ResponseEntity<String> getWeblogicAccess(){
-        serverService.getWeblogicAccess();
-        return  ResponseEntity.ok("Got Acces");
 
-    }
     @GetMapping("/sereverbuildVersion")
     public ResponseEntity<?> getServerBuildVersion(){
         Map<String, DBConnectionInfo> hashMap=getDBDetailsMap();
@@ -194,8 +194,7 @@ public class ServerController {
      */
     private  Map getDBDetailsMap() {
         Map<String, DBConnectionInfo> dbDetailsMap=new HashMap<String, DBConnectionInfo>();
-//		String server_name="jdbc:oracle:thin:@10.109.38.8:1524/DBG195";
-//        String user_name="U32_C5_6400";
+
         List<UserServer> userServers=userService.getAllUserServers();
         for(UserServer userServer:userServers){
             DBConnectionInfo dbConnectionInfo;
@@ -208,34 +207,6 @@ public class ServerController {
             dbDetailsMap.put(dbConnectionInfo.getServerName(), dbConnectionInfo);
 
         }
-
-
-
-
-        /*dbConnectionInfo=new DBConnectionInfo();
-        dbConnectionInfo.setServerName("10.109.38.8");
-        dbConnectionInfo.setUrl("jdbc:oracle:thin:@10.109.38.8:1524/DBG195");
-        dbConnectionInfo.setUserName("U32_C5_6400");
-        dbConnectionInfo.setUserPass("U32_C5_6400");
-        dbConnectionInfo.setClassName("oracle.jdbc.OracleDriver");
-        dbDetailsMap.put(dbConnectionInfo.getServerName(), dbConnectionInfo);
-
-
-        dbConnectionInfo=new DBConnectionInfo();
-        dbConnectionInfo.setServerName("10.109.68.122");
-        dbConnectionInfo.setUrl("jdbc:oracle:thin:@10.109.68.122:1524/DBG195");
-        dbConnectionInfo.setUserName("U32_C5_6400");
-        dbConnectionInfo.setUserPass("U32_C5_6400");
-        dbConnectionInfo.setClassName("oracle.jdbc.OracleDriver");
-        dbDetailsMap.put(dbConnectionInfo.getServerName(), dbConnectionInfo);
-
-        dbConnectionInfo=new DBConnectionInfo();
-        dbConnectionInfo.setServerName("10.109.68.95");
-        dbConnectionInfo.setUrl("jdbc:oracle:thin:@10.109.68.95:1524/DBG195");
-        dbConnectionInfo.setUserName("U32_C5_6400");
-        dbConnectionInfo.setUserPass("U32_C5_6400");
-        dbConnectionInfo.setClassName("oracle.jdbc.OracleDriver");
-        dbDetailsMap.put(dbConnectionInfo.getServerName(), dbConnectionInfo);*/
 
         return dbDetailsMap;
     }

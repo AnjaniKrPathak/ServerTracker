@@ -1,7 +1,9 @@
 package com.example.servertracker.user.service;
 
+import com.example.servertracker.user.entity.LoginDetail;
 import com.example.servertracker.user.entity.User;
 import com.example.servertracker.user.entity.UserServer;
+import com.example.servertracker.user.repo.LoginDetailRepo;
 import com.example.servertracker.user.repo.UserRepo;
 import com.example.servertracker.user.repo.UserServerRepo;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -16,6 +18,8 @@ public class UserServiceImpl implements UserService{
    UserRepo userRepo;
     @Autowired
     UserServerRepo userServerRepo;
+    @Autowired
+    LoginDetailRepo loginDetailRepo;
 
     public User addUser(User user){
       return userRepo.save(user);
@@ -39,6 +43,11 @@ public class UserServiceImpl implements UserService{
     @Override
     public UserServer getUserServer(String serverIp) {
         return userServerRepo.getUserServerByServerIp(serverIp);
+    }
+
+    @Override
+    public LoginDetail createLoginDetail(LoginDetail lg) {
+        return loginDetailRepo.save(lg);
     }
 
 }

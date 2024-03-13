@@ -3,7 +3,7 @@ package com.example.servertracker.report;
 import com.example.servertracker.report.data.Item;
 import com.example.servertracker.report.service.ReportService;
 import com.example.servertracker.server.data.LinuxServer;
-import com.example.servertracker.server.data.ServerSpace;
+import com.example.servertracker.server.data.UnixSpaceDetail;
 import com.example.servertracker.server.data.ServerTableSpace;
 import com.example.servertracker.server.service.ServerService;
 import net.sf.jasperreports.engine.*;
@@ -107,7 +107,7 @@ public class ReportServiceImpl implements ReportService {
         Item item = new Item("test1");
         // List<Item> items = new ArrayList<>();
 
-        List<ServerSpace> serverSpacesList=serverService.getOSInfo(new LinuxServer("10.109.38.8",22,"netcrk","crknet"));
+        List<UnixSpaceDetail> serverSpacesList=serverService.getOSInfo(new LinuxServer("10.109.38.8",22,"netcrk","crknet"));
         serverSpacesList.stream().forEach(s->System.out.print(s.getFileSystem()+""+s.getMountedOn()));
 
         byte[] reportContent = getServerSpaceReport(serverSpacesList, "pdf");
@@ -140,7 +140,7 @@ public class ReportServiceImpl implements ReportService {
 
 
     }
-    public byte[] getServerSpaceReport(List<ServerSpace> items, String format) {
+    public byte[] getServerSpaceReport(List<UnixSpaceDetail> items, String format) {
 
         JasperReport jasperReport;
 

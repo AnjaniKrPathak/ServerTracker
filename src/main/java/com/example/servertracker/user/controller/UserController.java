@@ -1,5 +1,6 @@
 package com.example.servertracker.user.controller;
 
+import com.example.servertracker.user.entity.LoginDetail;
 import com.example.servertracker.user.entity.User;
 import com.example.servertracker.user.entity.UserServer;
 import com.example.servertracker.user.response.UserReseponse;
@@ -35,9 +36,14 @@ public class UserController {
     @PostMapping(value = "/addUser")
     public ResponseEntity<?>  addUser(@RequestBody User user){
           User u1 =userService.addUser(user);
+          LoginDetail lg=new LoginDetail();
+          lg.setLoginId(u1.getEmail());
+          lg.setPassword(u1.getPassword());
+        LoginDetail loginDetail=userService.createLoginDetail(lg);
         UserReseponse ur=new UserReseponse();
         Map<String,Object> map=new LinkedHashMap<String,Object>();
         if(user.getEmail()!=null){
+
 
             ur.setUserId(u1.getEmail());
             ur.setMessage("User Added Succfully");

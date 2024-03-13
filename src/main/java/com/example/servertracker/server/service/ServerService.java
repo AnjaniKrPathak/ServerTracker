@@ -11,11 +11,11 @@ import java.util.Map;
 public interface ServerService {
     public List<ServerTableSpace> getServerTableSpaceDetail();
     public List<PocOffering> testDb();
-    public List<ServerSpace> getOSInfo(LinuxServer linuxServer);
+    public List<UnixSpaceDetail> getOSInfo(LinuxServer linuxServer);
 
     Map<String, ArrayList<LinuxServer>> addServer(LinuxServer linuxServer);
 
-    HashMap<String, List<ServerSpace>> getUserServerOSInfo(List<UserServer> userServers);
+    HashMap<String, List<UnixSpaceDetail>> getUserServerOSInfo(List<UserServer> userServers);
 
     ServerPocAmStatus getServerPocAMStatus(String serverIp);
 
@@ -24,4 +24,6 @@ public interface ServerService {
     void getWeblogicAccess();
 
     ServerVersion getServerVersion(String serverIp);
+
+    HashMap<String, List<UnixSpaceDetail>> saveUserServerOSInfo(String key, List<UnixSpaceDetail> value);
 }

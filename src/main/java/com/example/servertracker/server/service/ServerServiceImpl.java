@@ -1,6 +1,7 @@
 package com.example.servertracker.server.service;
 
 import com.example.servertracker.server.dao.ServerDAO;
+import com.example.servertracker.server.dao.UnixServerRepo;
 import com.example.servertracker.server.data.*;
 import com.example.servertracker.user.entity.UserServer;
 import com.jcraft.jsch.*;
@@ -10,12 +11,8 @@ import org.springframework.stereotype.Service;
 
 import javax.management.MBeanServerConnection;
 import javax.management.ObjectName;
-import javax.management.remote.JMXConnector;
-import javax.management.remote.JMXConnectorFactory;
-import javax.management.remote.JMXServiceURL;
 import javax.naming.Context;
 import javax.naming.InitialContext;
-import javax.naming.NamingException;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
@@ -27,6 +24,8 @@ import java.util.*;
 public class ServerServiceImpl implements ServerService {
     @Autowired
     ServerDAO serverDAO;
+    @Autowired
+    UnixServerRepo unixServerRepo;
 
     @Override
     public List<ServerTableSpace> getServerTableSpaceDetail() {
@@ -41,8 +40,8 @@ public class ServerServiceImpl implements ServerService {
     ArrayList<LinuxServer> list=new ArrayList<>();
 
 
-    public List<ServerSpace> getOSInfo(LinuxServer linuxServer) {
-        List<ServerSpace> serverSpaces = new ArrayList<>();
+    public List<UnixSpaceDetail> getOSInfo(LinuxServer linuxServer) {
+        List<UnixSpaceDetail> serverSpaces = new ArrayList<>();
         try {
 
             serverSpaces = puttyConnection(linuxServer.getUsername(), linuxServer.getHost(), linuxServer.getPort(), linuxServer.getPassword());
@@ -71,9 +70,9 @@ public class ServerServiceImpl implements ServerService {
     }
 
     @Override
-    public HashMap<String, List<ServerSpace>> getUserServerOSInfo(List<UserServer> userServers) {
-        HashMap<String,List<ServerSpace>> serverOsInfoMap=new HashMap<>();
-        List<ServerSpace> serverSpaces=new ArrayList<>();
+    public HashMap<String, List<UnixSpaceDetail>> getUserServerOSInfo(List<UserServer> userServers) {
+        HashMap<String,List<UnixSpaceDetail>> serverOsInfoMap=new HashMap<>();
+        List<UnixSpaceDetail> serverSpaces=new ArrayList<>();
         for(UserServer u1:userServers){
 
             try {
@@ -146,12 +145,18 @@ public class ServerServiceImpl implements ServerService {
         return serverVersion;
     }
 
-    public static List<ServerSpace> puttyConnection(String userName, String hostName, int port, String password)
+    @Override
+    public HashMap<String, List<UnixSpaceDetail>> saveUserServerOSInfo(String key, List<UnixSpaceDetail> value) {
+        return null;
+    }
+
+
+    public  List<UnixSpaceDetail> puttyConnection(String userName, String hostName, int port, String password)
             throws JSchException, IOException {
         JSch jsch = new JSch();
         String command = "df -h";
         /*String command ="df -h | grep \"u02\"";*/
-        List<ServerSpace> serverSpaces = new ArrayList<>();
+        List<UnixSpaceDetail> serverSpaces = new ArrayList<>();
         Session session = jsch.getSession(userName, hostName, port);
 
         // Set the password for authentication (you can use other methods for authentication)
@@ -184,23 +189,18 @@ public class ServerServiceImpl implements ServerService {
         System.out.println(reader.readLine());
         int i=0;
         while ((line = reader.readLine()) != null) {
-            ServerSpace serverSpace=new ServerSpace();
+            UnixSpaceDetail serverSpace=new UnixSpaceDetail();
             splitLine=line.split("\\s+");
 
-            /*hm.put("Filesystem", splitLine[0].substring(splitLine[0].lastIndexOf("/")+1,splitLine[0].length()));
-            hm.put("Size", splitLine[1]);
-            hm.put("Used",splitLine[2]);
-            hm.put("Avail", splitLine[3]);
-            hm.put("Use%", splitLine[4]);
-            hm.put("Mouneted_On", splitLine[5]);*/
 
               if(splitLine[0].substring(splitLine[0].lastIndexOf("/")+1,splitLine[0].length()).equals("vmdisk2-u02")){
                   serverSpace.setFileSystem(splitLine[0].substring(splitLine[0].lastIndexOf("/")+1,splitLine[0].length()));
-                  serverSpace.setSize(splitLine[1]);
+                  serverSpace.setTotalSize(splitLine[1]);
                   serverSpace.setUsed(splitLine[2]);
                   serverSpace.setAvail(splitLine[3]);
-                  serverSpace.setUse(splitLine[4]);
+                  serverSpace.setUsedPerc(splitLine[4]);
                   serverSpace.setMountedOn(splitLine[5]);
+                  unixServerRepo.save(serverSpace);
                   serverSpaces.add(serverSpace);
               }
 
@@ -208,29 +208,6 @@ public class ServerServiceImpl implements ServerService {
 
 
         }
-      /*  for(Map.Entry<String,String> entry:hm.entrySet()){
-            System.out.println("Key "+entry.getKey()+" Value"+entry.getValue());
-        }
-       for(Map.Entry<String,String> entry:hm.entrySet()){
-           ServerSpace serverSpace=new ServerSpace();
-           if(entry.getKey()=="Filesystem"){
-               serverSpace.setFileSystem(entry.getValue());
-           } else if (entry.getKey()=="Size") {
-               serverSpace.setSize(entry.getValue());
-
-           } else if (entry.getKey()=="Avail") {
-               serverSpace.setAvail(entry.getValue());
-
-           } else if (entry.getKey()=="Used_per") {
-               serverSpace.setAvail(entry.getValue());
-
-           } else if (entry.getKey()=="Mounted_on") {
-               serverSpace.setMountedOn(entry.getValue());
-
-           }
-           serverSpaces.add(serverSpace);
-
-       }*/
 
 
         // Disconnect the channel and session when done

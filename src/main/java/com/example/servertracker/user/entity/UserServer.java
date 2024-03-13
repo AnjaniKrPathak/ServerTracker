@@ -18,6 +18,11 @@ public class UserServer {
 
 
     @Id
+    @NonNull
+    @SequenceGenerator(name="server_generator", sequenceName="USER_SERVER_SEQ", allocationSize=1)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="server_generator")
+    @Column(name = "ID")
+    private Long id;
     @Column(name = "SERVER_IP")
     @NonNull
     private String serverIp;

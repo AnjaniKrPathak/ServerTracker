@@ -1,6 +1,5 @@
 package com.example.servertracker.server.controller;
 
-import com.example.servertracker.server.dao.UnixServerRepo;
 import com.example.servertracker.server.data.*;
 import com.example.servertracker.server.service.ServerService;
 
@@ -16,7 +15,7 @@ import java.util.*;
 import static com.example.servertracker.server.dao.ConfigDataSource.getDBFlatOfferingDetails;
 
 
-// @CrossOrigin(origins = "http://localhost:8084")
+
 @RestController
 @RequestMapping("/server")
 public class ServerController {
@@ -31,7 +30,7 @@ public class ServerController {
 
     @GetMapping("/dbinfo")
     public ResponseEntity<?> getDBInfo(){
-        List<ServerTableSpace> tableSpacesList=serverService.getServerTableSpaceDetail();
+        List<DBTableSpaceDetail> tableSpacesList=serverService.getServerTableSpaceDetail();
         Map<String,Object> map=new LinkedHashMap<String,Object>();
         if(!tableSpacesList.isEmpty()){
             map.put("status", 1);
@@ -209,6 +208,13 @@ public class ServerController {
         }
 
         return dbDetailsMap;
+    }
+
+    @GetMapping("/dashBordDetailInfo")
+    private ResponseEntity<?> getDashbordDetailInfo(@RequestParam String serverIp){
+        List<DashbordDetailInfo> dashbordDetailInfoList=serverService.getDashbordDetailInfo(serverIp);
+
+        return new ResponseEntity<>(dashbordDetailInfoList,HttpStatus.OK);
     }
 
 }

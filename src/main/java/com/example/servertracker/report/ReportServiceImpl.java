@@ -4,7 +4,7 @@ import com.example.servertracker.report.data.Item;
 import com.example.servertracker.report.service.ReportService;
 import com.example.servertracker.server.data.LinuxServer;
 import com.example.servertracker.server.data.UnixSpaceDetail;
-import com.example.servertracker.server.data.ServerTableSpace;
+import com.example.servertracker.server.data.DBTableSpaceDetail;
 import com.example.servertracker.server.service.ServerService;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -32,7 +32,7 @@ public class ReportServiceImpl implements ReportService {
         String status = "generated";
         Item item = new Item("test1");
        // List<Item> items = new ArrayList<>();
-        List<ServerTableSpace> tableSpacesList=serverService.getServerTableSpaceDetail();
+        List<DBTableSpaceDetail> tableSpacesList=serverService.getServerTableSpaceDetail();
 
 
         byte[] reportContent = getItemReport(tableSpacesList, "pdf");
@@ -66,7 +66,7 @@ public class ReportServiceImpl implements ReportService {
 
     }
 
-    public byte[] getItemReport(List<ServerTableSpace> items, String format) {
+    public byte[] getItemReport(List<DBTableSpaceDetail> items, String format) {
 
         JasperReport jasperReport;
 

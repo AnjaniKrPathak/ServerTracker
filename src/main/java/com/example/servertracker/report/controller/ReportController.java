@@ -1,7 +1,7 @@
 package com.example.servertracker.report.controller;
 
 import com.example.servertracker.report.service.ReportService;
-import com.example.servertracker.server.data.ServerTableSpace;
+import com.example.servertracker.server.data.DBTableSpaceDetail;
 import com.example.servertracker.server.service.ServerService;
 import net.sf.jasperreports.engine.*;
 import net.sf.jasperreports.engine.data.JRBeanCollectionDataSource;
@@ -15,7 +15,6 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.io.FileNotFoundException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -35,7 +34,7 @@ public class ReportController {
     @GetMapping("/tablespacereport")
     public ResponseEntity<byte[]> getTableSpaceReport() throws FileNotFoundException {
         try{
-        List<ServerTableSpace> tableSpaceList=serverService.getServerTableSpaceDetail();
+        List<DBTableSpaceDetail> tableSpaceList=serverService.getServerTableSpaceDetail();
         //tableSpaceList.add(new ServerTableSpace("NC_DATA",49152,44855.6875,4296.3125,91));
        // tableSpaceList.add(new ServerTableSpace("NC_INDEXES",12288,8090.375,4197.625,65));
         Map<String,Object> tableSpaceParam=new HashMap<>();

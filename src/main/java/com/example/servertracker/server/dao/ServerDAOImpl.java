@@ -1,15 +1,11 @@
 package com.example.servertracker.server.dao;
 
 import com.example.servertracker.server.data.*;
-import com.example.servertracker.server.service.ServerService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.jdbc.core.BeanPropertyRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Component;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
-import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -19,7 +15,7 @@ public class ServerDAOImpl implements ServerDAO {
     JdbcTemplate jdbcTemplate;
 
     @Override
-    public List<ServerTableSpace> getServerTableSpaceDEtail() {
+    public List<DBTableSpaceDetail> getServerTableSpaceDEtail() {
         String sql = "select a.tablespace_name \"Table_Space_Name\",a.total \"SPACE_ALLOCATED\",a.total-b.free \"SPACE_USED\",b.free \"SPACE_FREE\", \n" +
                 "trunc(((a.total-b.free)/a.total)*100) \"PCT_Used\" from \n" +
                 "(select tablespace_name,sum(bytes/1024/1024) Total from dba_data_files group by tablespace_name) a, \n" +
@@ -27,8 +23,8 @@ public class ServerDAOImpl implements ServerDAO {
                 "where a.tablespace_name=b.tablespace_name";
 
 
-        List<ServerTableSpace> tableSpaceList = jdbcTemplate.query(sql,
-                BeanPropertyRowMapper.newInstance(ServerTableSpace.class));
+        List<DBTableSpaceDetail> tableSpaceList = jdbcTemplate.query(sql,
+                BeanPropertyRowMapper.newInstance(DBTableSpaceDetail.class));
 
         return tableSpaceList;
     }
@@ -92,5 +88,32 @@ public class ServerDAOImpl implements ServerDAO {
     @Override
     public ServerVersion getServerVersion(String serverIp) {
         return null;
+    }
+
+    @Override
+    public List<DashbordDetailInfo> getDashbordDetailInfo(String serverIp) {
+
+        String sql =    "select dst.server_ip,dst.pct_used \"OS_SPACE_OCCUPY_PERC\",usd.used_perc \"DB_TABLE_SPACE_OCCUPY_PERC\" from  DB_TABLE_SPACE_DETAIL dst , unix_space_detail usd where dst.server_ip = usd.server_ip and  dst.server_ip =\n" +
+                "\'10.109.38.8\'";
+        List<DashbordDetailInfo> dashbordDetailInfos = jdbcTemplate.query(
+                sql,
+                new BeanPropertyRowMapper(DashbordDetailInfo.class));
+        System.out.println("Dashbord Detail Size list"+dashbordDetailInfos.size());
+         List<DashbordDetailInfo> dashbordDetailInfoList=new ArrayList<>();
+         if(!dashbordDetailInfos.isEmpty()){
+             for(DashbordDetailInfo ddi: dashbordDetailInfos){
+                 DashbordDetailInfo detailInfo =new DashbordDetailInfo();
+                 detailInfo.setServerIp(serverIp);
+                 detailInfo.setDbTableSpaceOccupyPerc(ddi.getDbTableSpaceOccupyPerc());
+                 detailInfo.setOsSpaceOccupyPerc(ddi.getOsSpaceOccupyPerc());
+                 dashbordDetailInfoList.add(detailInfo);
+         }
+             return dashbordDetailInfoList;
+        }
+         else {
+             return dashbordDetailInfoList;
+         }
+
+
     }
 }

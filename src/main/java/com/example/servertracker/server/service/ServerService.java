@@ -9,7 +9,7 @@ import java.util.List;
 import java.util.Map;
 
 public interface ServerService {
-    public List<ServerTableSpace> getServerTableSpaceDetail();
+    public List<DBTableSpaceDetail> getServerTableSpaceDetail();
     public List<PocOffering> testDb();
     public List<UnixSpaceDetail> getOSInfo(LinuxServer linuxServer);
 
@@ -26,4 +26,6 @@ public interface ServerService {
     ServerVersion getServerVersion(String serverIp);
 
     HashMap<String, List<UnixSpaceDetail>> saveUserServerOSInfo(String key, List<UnixSpaceDetail> value);
+
+    List<DashbordDetailInfo> getDashbordDetailInfo(String serverIp);
 }

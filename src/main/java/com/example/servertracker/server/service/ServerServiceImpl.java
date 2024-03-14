@@ -1,5 +1,6 @@
 package com.example.servertracker.server.service;
 
+import com.example.servertracker.server.dao.DBTableSpaceRepo;
 import com.example.servertracker.server.dao.ServerDAO;
 import com.example.servertracker.server.dao.UnixServerRepo;
 import com.example.servertracker.server.data.*;
@@ -26,9 +27,21 @@ public class ServerServiceImpl implements ServerService {
     ServerDAO serverDAO;
     @Autowired
     UnixServerRepo unixServerRepo;
+    @Autowired
+    DBTableSpaceRepo dbTableSpaceRepo;
 
     @Override
-    public List<ServerTableSpace> getServerTableSpaceDetail() {
+    public List<DBTableSpaceDetail> getServerTableSpaceDetail() {
+        List<DBTableSpaceDetail> dbTableSpaceDetailList =serverDAO.getServerTableSpaceDEtail();
+        if(!dbTableSpaceDetailList.isEmpty()) {
+            for (DBTableSpaceDetail db : dbTableSpaceDetailList) {
+                if (db.getTableSpaceName().equals("SYSTEM") || db.getTableSpaceName().equals("NC_DATA")) {
+                    dbTableSpaceRepo.saveAndFlush(db);
+                }
+
+
+            }
+        }
         return serverDAO.getServerTableSpaceDEtail();
     }
 
@@ -148,6 +161,12 @@ public class ServerServiceImpl implements ServerService {
     @Override
     public HashMap<String, List<UnixSpaceDetail>> saveUserServerOSInfo(String key, List<UnixSpaceDetail> value) {
         return null;
+    }
+
+    @Override
+    public List<DashbordDetailInfo> getDashbordDetailInfo(String serverIp) {
+        List<DashbordDetailInfo> dashbordDetailInfos =serverDAO.getDashbordDetailInfo(serverIp);
+        return dashbordDetailInfos;
     }
 
 

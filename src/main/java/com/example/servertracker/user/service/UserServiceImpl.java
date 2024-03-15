@@ -41,13 +41,18 @@ public class UserServiceImpl implements UserService{
     }
 
     @Override
-    public UserServer getUserServer(String serverIp) {
+    public UserServer getServerBasedOnServerIP(String serverIp) {
         return userServerRepo.getUserServerByServerIp(serverIp);
     }
 
     @Override
     public LoginDetail createLoginDetail(LoginDetail lg) {
         return loginDetailRepo.save(lg);
+    }
+
+    @Override
+    public List<UserServer> getServerBasedOnUserId(Long userId) {
+        return userServerRepo.getByUser(userId);
     }
 
 }

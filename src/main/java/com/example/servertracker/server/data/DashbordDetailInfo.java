@@ -14,4 +14,5 @@ public class DashbordDetailInfo {
     private String osSpaceOccupyPerc;
 
 
+
 }

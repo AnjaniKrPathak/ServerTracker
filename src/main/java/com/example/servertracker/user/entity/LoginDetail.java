@@ -16,7 +16,8 @@ import lombok.NonNull;
 public class LoginDetail {
     @Id
     @NonNull
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @SequenceGenerator(name="login_generator", sequenceName="LOGIN_DETAIL_SEQ", allocationSize=1)
+    @GeneratedValue(strategy=GenerationType.SEQUENCE, generator="login_generator")
     private Long id;
     @NonNull
     private String loginId;

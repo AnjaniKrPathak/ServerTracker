@@ -13,11 +13,9 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
-import software.amazon.awssdk.services.s3.endpoints.internal.Value;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -39,7 +37,7 @@ public class UserController {
           LoginDetail lg=new LoginDetail();
           lg.setLoginId(u1.getEmail());
           lg.setPassword(u1.getPassword());
-        LoginDetail loginDetail=userService.createLoginDetail(lg);
+        //LoginDetail loginDetail=userService.createLoginDetail(lg);
         UserReseponse ur=new UserReseponse();
         Map<String,Object> map=new LinkedHashMap<String,Object>();
         if(user.getEmail()!=null){
@@ -151,11 +149,16 @@ public class UserController {
         return new ResponseEntity<>(response, HttpStatus.OK);
 
     }
-    @GetMapping("/getServer/{serverIp}")
-    @CrossOrigin(origins = "http://localhost:3000")
-    public ResponseEntity<UserServer> getServerDetailBasedOnIp(@PathVariable String serverIp){
-        UserServer userServer=userService.getUserServer(serverIp);
+    @GetMapping("/getServerBasedOnServerIP/{serverIp}")
+
+    public ResponseEntity<UserServer> getServerBasedOnServerIP(@PathVariable String serverIp){
+        UserServer userServer=userService.getServerBasedOnServerIP(serverIp);
         return new ResponseEntity<>(userServer,HttpStatus.OK);
+    }
+    @GetMapping("/getServerBasedOnUserId")
+    public ResponseEntity<?> getServerBasedonUserId(@PathVariable Long userId){
+        List<UserServer> userServerList=userService.getServerBasedOnUserId(userId);
+        return new ResponseEntity<>(userServerList,HttpStatus.OK);
     }
 
 }

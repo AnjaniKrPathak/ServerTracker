@@ -3,7 +3,6 @@ package com.example.servertracker.user.service;
 import com.example.servertracker.user.entity.LoginDetail;
 import com.example.servertracker.user.entity.User;
 import com.example.servertracker.user.entity.UserServer;
-import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
@@ -17,7 +16,9 @@ public interface UserService {
 
     List<UserServer> getAllUserServers();
 
-    UserServer getUserServer(String serverIp);
+    UserServer getServerBasedOnServerIP(String serverIp);
 
     LoginDetail createLoginDetail(LoginDetail lg);
+
+    List<UserServer> getServerBasedOnUserId(Long userId);
 }
